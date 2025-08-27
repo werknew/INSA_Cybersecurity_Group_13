@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ScanFormProps {
   onSubmit: (target: string, scanType: string) => void;
@@ -8,182 +8,170 @@ interface ScanFormProps {
   scanTypes: string[];
 }
 
-// SVG Icons
-const TargetIcon = () => (
-  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8m-4-4h8" />
-  </svg>
-);
+const icons: Record<string, JSX.Element> = {
+  quick: <svg className="w-6 h-6 text-yellow-400 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
+  full: <svg className="w-6 h-6 text-green-400 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>,
+  stealth: <svg className="w-6 h-6 text-blue-400 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>,
+  web: <svg className="w-6 h-6 text-purple-400 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+};
 
-const ShieldIcon = () => (
-  <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-  </svg>
-);
-
-const ZapIcon = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-  </svg>
-);
-
-const ScanIcon = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-  </svg>
-);
-
-const WebIcon = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-  </svg>
-);
-
-const AlertIcon = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
-
-const scanTypeDescriptions = {
-  quick: "Fast port scan (100 most common ports)",
-  full: "Comprehensive scan with version detection",
-  stealth: "Slower, less detectable scan",
-  vulnerability: "Vulnerability assessment using NSE scripts",
-  web: "Web application vulnerability scan using Nikto"
+const descriptions: Record<string, string> = {
+  quick: "Fast scan of the most common ports",
+  full: "Deep scan with version detection",
+  stealth: "Undetectable and slower scan",
+  vulnerability: "Check for vulnerabilities via scripts",
+  web: "Scan web applications for security issues"
 };
 
 export default function ScanForm({ onSubmit, loading, scanTypes }: ScanFormProps) {
   const [target, setTarget] = useState('');
-  const [selectedScanType, setSelectedScanType] = useState('quick');
-  const [showTooltip, setShowTooltip] = useState<string | null>(null);
+  const [selected, setSelected] = useState('quick');
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [particles, setParticles] = useState<{ x: number; y: number; size: number; speed: number; }[]>([]);
+
+  useEffect(() => {
+    const p = Array.from({ length: 50 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      size: Math.random() * 4 + 1,
+      speed: Math.random() * 0.3 + 0.1
+    }));
+    setParticles(p);
+
+    const interval = setInterval(() => {
+      setParticles(prev =>
+        prev.map(p => ({ ...p, y: p.y + p.speed > window.innerHeight ? 0 : p.y + p.speed }))
+      );
+    }, 30);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (target.trim() && isValidTarget(target, selectedScanType)) {
-      onSubmit(target.trim(), selectedScanType);
-    }
+    if (target.trim() && validateTarget(target, selected)) onSubmit(target.trim(), selected);
   };
 
-  const isValidTarget = (input: string, scanType: string) => {
-    const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
-    const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/;
-    const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-    
-    // For web scans, allow URLs and domains
-    if (scanType === 'web') {
-      return ipRegex.test(input) || domainRegex.test(input) || urlRegex.test(input) || input.startsWith('http://') || input.startsWith('https://');
-    }
-    
-    // For network scans, allow IPs and domains
-    return ipRegex.test(input) || domainRegex.test(input);
-  };
-
-  const getScanTypeIcon = (type: string) => {
-    switch (type) {
-      case 'quick': return <ZapIcon />;
-      case 'full': return <ScanIcon />;
-      case 'stealth': return <ShieldIcon />;
-      case 'web': return <WebIcon />;
-      default: return <ScanIcon />;
-    }
+  const validateTarget = (input: string, type: string) => {
+    const ip = /^(\d{1,3}\.){3}\d{1,3}$/;
+    const domain = /^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/;
+    const url = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    if (type === 'web') return ip.test(input) || domain.test(input) || url.test(input) || input.startsWith('http');
+    return ip.test(input) || domain.test(input);
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
-      <div className="flex items-center mb-4">
-        <ShieldIcon />
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white ml-3">Security Scanner</h2>
+    <div className="relative p-10 overflow-hidden w-full min-h-screen flex flex-col items-center justify-start bg-black animate-bgGradient">
+      {particles.map((p, i) => (
+        <div
+          key={i}
+          className="absolute bg-purple-400 rounded-full"
+          style={{ left: p.x, top: p.y, width: p.size, height: p.size, opacity: 0.6 }}
+        ></div>
+      ))}
+
+      <div className="flex items-center space-x-4 relative z-10 mb-12">
+        <svg className="w-12 h-12 text-green-400 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2v4m0 12v4m8-8h-4M4 12H0m15.364-6.364l-2.828 2.828M6.464 17.536l-2.828 2.828m12.728 0l2.828-2.828M6.464 6.464L3.636 9.292" />
+        </svg>
+        <h2 className="text-5xl font-extrabold text-green-400 animate-pulse-slow">
+          Security Scanner
+        </h2>
       </div>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
+
+      <form onSubmit={handleSubmit} className="relative z-10 w-full max-w-4xl space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Target URL or IP Address
-          </label>
-          <div className="relative">
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-              <TargetIcon />
-            </div>
-            <input
-              type="text"
-              value={target}
-              onChange={(e) => setTarget(e.target.value)}
-              placeholder={
-                selectedScanType === 'web' 
-                  ? "Enter target (e.g., example.com, https://example.com, 192.168.1.1)"
-                  : "Enter target (e.g., 192.168.1.1, example.com)"
-              }
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
-              disabled={loading}
-            />
-          </div>
-          {target && !isValidTarget(target, selectedScanType) && (
-            <p className="text-sm text-red-500 mt-1 flex items-center">
-              <AlertIcon />
-              <span className="ml-1">
-                {selectedScanType === 'web' 
-                  ? "Please enter a valid IP address, domain, or URL"
-                  : "Please enter a valid IP address or domain"}
-              </span>
-            </p>
+          <label className="block font-semibold mb-2 text-white">Target</label>
+          <input
+            type="text"
+            value={target}
+            onChange={(e) => setTarget(e.target.value)}
+            placeholder="Enter domain, IP, or URL"
+            className="w-full p-4 rounded-xl bg-gray-900 border-2 border-gray-700 focus:border-green-400 focus:ring-2 focus:ring-green-300 transition-all duration-300 outline-none text-white shadow-inner"
+            disabled={loading}
+          />
+          {target && !validateTarget(target, selected) && (
+            <p className="mt-2 text-red-500">Invalid target for selected scan</p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Scan Type
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-            {scanTypes.map((type) => (
-              <div 
-                key={type}
-                className="relative"
-                onMouseEnter={() => setShowTooltip(type)}
-                onMouseLeave={() => setShowTooltip(null)}
-              >
-                <button
-                  type="button"
-                  onClick={() => setSelectedScanType(type)}
-                  className={`w-full p-3 rounded-lg border-2 text-center transition-all ${
-                    selectedScanType === type
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-400'
-                  }`}
-                  disabled={loading}
+          <label className="block font-semibold mb-4 text-white">Scan Type</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {scanTypes.map(type => {
+              const isSelected = selected === type;
+              const isHovered = hovered === type;
+              return (
+                <div
+                  key={type}
+                  className={`relative flex flex-col items-center p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 shadow-lg
+                    ${isSelected ? 'border-green-400 bg-gray-800 scale-105 shadow-2xl animate-pulse' : 'border-gray-700 bg-gray-800 hover:border-green-400 hover:shadow-xl hover:scale-105'}
+                  `}
+                  onClick={() => setSelected(type)}
+                  onMouseEnter={() => setHovered(type)}
+                  onMouseLeave={() => setHovered(null)}
                 >
-                  <div className="flex items-center justify-center">
-                    {getScanTypeIcon(type)}
-                    <span className="ml-2">{type.charAt(0).toUpperCase() + type.slice(1)}</span>
+                  <div className={`transition-transform duration-500 ${isHovered || isSelected ? 'animate-bounce' : ''}`}>
+                    {icons[type]}
                   </div>
-                </button>
-                
-                {showTooltip === type && (
-                  <div className="absolute z-10 w-48 p-2 mt-1 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600">
-                    {scanTypeDescriptions[type as keyof typeof scanTypeDescriptions]}
-                  </div>
-                )}
-              </div>
-            ))}
+                  <span className="mt-4 font-bold text-lg capitalize text-white">{type}</span>
+                  {isHovered && (
+                    <div className="absolute bottom-full mb-2 w-48 p-2 text-sm text-gray-300 bg-gray-900 border border-gray-700 rounded-lg shadow-lg transform -translate-y-2 opacity-0 animate-slideFadeIn">
+                      {descriptions[type]}
+                    </div>
+                  )}
+                  {isHovered && <div className="absolute inset-0 rounded-2xl border-2 border-green-400 blur-md opacity-50 animate-pulse"></div>}
+                </div>
+              );
+            })}
           </div>
         </div>
 
         <button
           type="submit"
-          disabled={loading || !isValidTarget(target, selectedScanType)}
-          className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed shadow-md"
+          disabled={loading || !validateTarget(target, selected)}
+          className="relative w-full p-4 rounded-2xl bg-gradient-to-r from-green-400 to-blue-500 font-bold text-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-white"
         >
           {loading ? (
-            <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-              Scanning...
+            <div className="flex items-center justify-center space-x-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+              <span>Scanning...</span>
             </div>
           ) : (
-            `Start ${selectedScanType.charAt(0).toUpperCase() + selectedScanType.slice(1)} Scan`
+            `Start ${selected.charAt(0).toUpperCase() + selected.slice(1)} Scan`
           )}
         </button>
       </form>
+
+      <style jsx>{`
+        @keyframes slideFadeIn {
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slideFadeIn { animation: slideFadeIn 0.3s forwards; }
+
+        @keyframes bgGradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animate-bgGradient { 
+          background: linear-gradient(-45deg, #010101, #0f0c29, #00111a); 
+          background-size: 600% 600%; 
+          animation: bgGradient 30s ease infinite; 
+        }
+
+        @keyframes pulseSlow {
+          0%, 100% { text-shadow: 0 0 4px #00ff99, 0 0 8px #00ccff, 0 0 12px #00ffcc; }
+          50% { text-shadow: 0 0 8px #00ff99, 0 0 16px #00ccff, 0 0 24px #00ffcc; }
+        }
+        .animate-pulse-slow { animation: pulseSlow 2s infinite; }
+
+        @keyframes spinSlow {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .animate-spin-slow { animation: spinSlow 10s linear infinite; }
+      `}</style>
     </div>
   );
 }
