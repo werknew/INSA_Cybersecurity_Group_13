@@ -6,45 +6,39 @@ this is the repository of Insa Cyber Talent Group 13
 
 ## 📌 Project Overview
 
-**Automated Vulnerability Scanner** is cybersecurity tool, for scanning systems you have for vulnerabilities and misconfigurations, services and web applications. It leverages powerful open-source tools such as **Nmap**, **NSE Scripts**, **Nikto** and **OpenVAS** to detect security flaws and create reports with references for Common Vulnerabilities & Exposures (CVE) and suggested remediations.
+Vulnerability Scanner Web Application
+A comprehensive web-based security scanning tool that provides both network and web application vulnerability assessment through an intuitive React frontend and Flask backend.
 
-With this project, organizations or individuals can easily find the security issues and fix them **before attackers exploiting it**.
+#🚀 Features
+Backend Capabilities
+Multiple Scan Types: Quick, Full, Stealth, Vulnerability, and Web scans
+Nmap Integration: Network discovery, port scanning, service detection
+Nikto Integration: Web application vulnerability scanning
+CVE Database: Local vulnerability database with severity ratings
+RESTful API: Flask-based JSON API with comprehensive error handling
+Frontend Features
+React with TypeScript: Modern, type-safe frontend development
+Tailwind CSS: Responsive design with dark/light mode support
+Real-time Scanning: Interactive scan forms with live results
+Visual Results: Collapsible sections with severity indicators
+Copy Functionality: Export results to clipboard
 
----
+#🛠️ Technology Stack
+Backend
+Python 3.8+ - Core programming language
+Flask - Web framework for REST API
+Nmap - Network security scanning
+Nikto - Web vulnerability scanning
+xmltodict - XML parsing for tool outputs
+Frontend
+React 18 - Frontend framework
+TypeScript - Type-safe development
+Tailwind CSS - Utility-first CSS framework
+Next.js - React framework (if used)
 
-## 🎯 Features
-
-- 📦 Scan IP addresses and ports for vulnerabilities
-- 🌐 Crawl and analyze web applications
-- 🧠 Match findings with known **CVE (Common Vulnerabilities and Exposures)**
-- 📄 Generate readable vulnerability reports.
-
----
-
-## 🛠️ Tools Used
-
-  Tool       | Purpose                                
--------------|----------------------------------------
-  **Nmap**   | Port scanning and service detection     
-  **NSE**    | Run vulnerability detection scripts     
-  **Nikto**  | Web server and app vulnerability scan   
-  **OpenVAS**| Deep vulnerability assessment           
-  **CVE DB** | Reference database for vulnerabilities  
-
----
-
-## 📚 Requirements
-
-- Basic understanding of networking and IP addresses
-- Linux-based system (Kali Linux recommended)
-- Tools installed:
-  - `nmap`
-  - `nikto`
-  - `openvas`
-  - Internet access to check CVEs
-
----
-  
-## 📌 Project Summary
-
-This project is an **Automated Vulnerability Scanner** that scans networks, servers, and web applications for known vulnerabilities and misconfigurations. Using tools like **Nmap**, **OpenVAS**, or **Nessus**, it identifies security issues, maps them to CVEs, and suggests remediation steps. It works both **online** (for real-time CVE data) and **offline** environments.
+#📦 Installation
+Prerequisites
+# Install required system tools
+sudo apt-get install nmap nikto  # Ubuntu/Debian
+# or
+brew install nmap nikto         # macOS
