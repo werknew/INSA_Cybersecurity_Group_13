@@ -2,7 +2,7 @@
 this is the repository of Insa Cyber Talent Group 13
 
 
-# 🔍 Automated Vulnerability Scanner
+# 🔍 Automated Vulnerability Scanner Tool
 
 ## 📌 Project Overview
 
