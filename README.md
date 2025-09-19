@@ -2,7 +2,7 @@
 this is the repository of Insa Cyber Talent Group 13
 
 
-# 🔍 Automated Vulnerability Scanner Tool
+# 🔍 Automated Vulnerability Scanner Security Tool
 
 ## 📌 Project Overview
 
@@ -36,6 +36,7 @@ RESTful API: Flask-based JSON API with robust error handling
  Copy & Export: Copy/export scan results
 
 🛠️ Technology Stack
+
 Backend
 
  Python 3.8+ – Core programming language
