@@ -1,0 +1,22 @@
+Usage
+
+Run the scanner from the project root:
+
+python scanner.py --target <IP_or_Domain> [options]
+
+Options
+
+Flag		Description
+--target	Required. Target IP address or domain.
+--web		Enable Nikto web scanning.
+--deep		Enable OpenVAS deep scanning (slower, requires OpenVAS setup).
+--report	Report format: txt (default), html, or json.
+
+Examples
+Basic Nmap scan + CVE mapping, text report:
+	python scanner.py --target 192.168.1.10
+
+Nmap + Nikto web scan, HTML report:
+	python scanner.py --target https://example.com --web --report html
+Full deep scan with OpenVAS, JSON report:
+	python scanner.py --target 192.168.1.10 --deep --report json
