@@ -1,0 +1,5 @@
+To Scan a host: 
+	python vulnscan_cli.py scan --target 192.168.1.10 --nmap --nikto --cve --ack
+
+To Write Markdown report:
+	 python vulnscan_cli.py scan --target https://example.com --nikto --cve --report-format md --output report.md --ack
