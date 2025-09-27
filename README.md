@@ -2,59 +2,27 @@
 this is the repository of Insa Cyber Talent Group 13
 
 
-# 🔍 Automated Vulnerability Scanner Security Tool
+## Automated Vulnerability Scanner Security Tool, Modular CLI Vulnerability Scanner
 
-## 📌 Project Overview
+**Vulnscanner** is a fast, modular, and extensible command-line vulnerability scanner built in Python. It orchestrates Nmap, Nikto, and optionally OpenVAS to detect services, extract versions, correlate known CVEs via the NVD API, and generate professional-grade reports.
 
-A comprehensive security scanning tool designed to perform both network and web application vulnerability assessments.
-It combines a Flask backend for powerful scanning capabilities with a React frontend for better user experience.
+---
 
-🚀 Features
+## Features
 
-🔧 Backend Capabilities
+- 🔍 **Nmap integration** – Service detection, port scanning, optional vulnerability scripts
+- 🌐 **Nikto integration** – Web server misconfiguration and vulnerability detection
+- 🛡️ **CVE enrichment** – Matches explicit CVEs and correlates service versions to known vulnerabilities
+- ⚡ **Fast mode** – Quick scans using top ports and aggressive timing
+- 📄 **Report generation** – Outputs in HTML, Markdown, or JSON
+- 🧠 **Offline mode** – Uses cached CVE data when disconnected
+- 🧰 **Modular design** – Easy to extend with new tools or parsers
 
- Multiple Scan Types: Quick, Full, Stealth, Vulnerability, and Web scans
+---
 
- Nmap Integration: Network discovery, port scanning, and service detection
+## Installation
 
- Nikto Integration: Web application vulnerability scanning
-
- CVE Database: Local vulnerability database with severity ratings for reference
-
-RESTful API: Flask-based JSON API with robust error handling
-
-🎨 Frontend Features
-
- Modern UI: Built with React and TypeScript for type safety and maintainability
-
- Responsive Design: Styled with Tailwind CSS, supporting dark/light mode
-
- Real-time Scanning: Interactive forms with live results while scans are running
-
- Visual Results: Collapsible sections with severity indicators for better readability
-
- Copy & Export: Copy/export scan results
-
-🛠️ Technology Stack
-
-Backend
-
- Python 3.8+ – Core programming language
-
- Flask – REST API framework
-
- Nmap – Network scanning engine
-
- Nikto – Web vulnerability scanner
-
- xmltodict – Parse XML outputs from scanning tools
-
-Frontend
-
- React 18 – Frontend framework
-
- TypeScript – Type-safe development
-
- Tailwind CSS – Utility-first CSS framework for responsive UI
-
- Next.js (Optional) – For advanced React features like SSR and routing
+### 1. System dependencies
+```bash
+sudo apt update
+sudo apt install -y nmap nikto
