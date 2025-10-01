@@ -1,0 +1,14 @@
+Flask==2.3.3
+Flask-CORS==4.0.0
+Flask-JWT-Extended==4.5.3
+python-dateutil==2.8.2
+reportlab==4.0.4
+xmltodict==0.13.0
+requests==2.31.0
+validators==0.20.0
+gunicorn==21.2.0
+# Add to your requirements.txt
+reportlab==4.0.4
+fpdf2==2.7.7
+Jinja2==3.1.2
+python-multipart==0.0.6
