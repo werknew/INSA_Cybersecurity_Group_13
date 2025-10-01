@@ -1,28 +1,71 @@
+// components/SecuritySidebar.tsx
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { FaHome, FaTasks, FaCogs, FaShieldAlt } from 'react-icons/fa';
+import { usePathname } from 'next/navigation';
+import { 
+  FaShieldAlt, 
+  FaSearch, 
+  FaFileAlt, 
+  FaCog,
+  FaRadiation,
+  FaUserShield
+} from 'react-icons/fa';
 
-const Sidebar = () => {
+const SecuritySidebar = () => {
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: '/', icon: FaShieldAlt, label: 'Dashboard', color: 'text-blue-400' },
+    { href: '/scans', icon: FaSearch, label: 'Scans', color: 'text-green-400' },
+    { href: '/vulnerabilities', icon: FaRadiation, label: 'Vulnerabilities', color: 'text-red-400' },
+    { href: '/reports', icon: FaFileAlt, label: 'Reports', color: 'text-purple-400' },
+    { href: '/settings', icon: FaCog, label: 'Settings', color: 'text-gray-400' },
+  ];
+
   return (
-    <aside className="w-64 bg-gradient-to-b from-blue-600 to-indigo-700 text-white h-screen p-6 flex flex-col">
-      <h2 className="text-2xl font-bold mb-8">Vulnerability Scanner</h2>
-      <nav className="flex-1 flex flex-col space-y-3">
-        <Link href="/" className="flex items-center gap-3 p-3 rounded hover:bg-white/20 transition">
-          <FaHome /> <span>Dashboard</span>
-        </Link>
-        <Link href="/scans" className="flex items-center gap-3 p-3 rounded hover:bg-white/20 transition">
-          <FaTasks /> <span>Scans</span>
-        </Link>
-        <Link href="/reports" className="flex items-center gap-3 p-3 rounded hover:bg-white/20 transition">
-          <FaShieldAlt /> <span>Reports</span>
-        </Link>
-        <Link href="/settings" className="flex items-center gap-3 p-3 rounded hover:bg-white/20 transition">
-          <FaCogs /> <span>Settings</span>
-        </Link>
+    <aside className="w-20 bg-gray-800/90 backdrop-blur-lg border-r border-gray-700 h-screen fixed left-0 top-0 flex flex-col items-center py-6 space-y-8">
+      {/* Logo */}
+      <div className="p-3 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl shadow-lg">
+        <FaUserShield className="text-white text-2xl" />
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 flex flex-col space-y-6">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href;
+          
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`group relative p-3 rounded-xl transition-all duration-200 ${
+                isActive 
+                  ? 'bg-gray-700 shadow-inner border border-gray-600' 
+                  : 'hover:bg-gray-700/50'
+              }`}
+              title={item.label}
+            >
+              <Icon className={`text-xl transition-transform duration-200 group-hover:scale-110 ${
+                isActive ? item.color : 'text-gray-400 group-hover:' + item.color
+              }`} />
+              
+              {/* Active indicator */}
+              {isActive && (
+                <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-red-500 rounded-l"></div>
+              )}
+            </Link>
+          );
+        })}
       </nav>
+
+      {/* Status Indicator */}
+      <div className="p-2 bg-green-500/20 rounded-lg border border-green-500/30">
+        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+      </div>
     </aside>
   );
 };
 
-export default Sidebar;
+export default SecuritySidebar;
