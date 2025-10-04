@@ -63,23 +63,23 @@ Frontend
 
  🧱 Project Structure
 
- Automated-Vulnerability-Scanner/
-│
-├── BackEnd/
-│   ├── app.py               # Flask API entry point
-│   ├── scanner.py           # Main scanning engine (Nmap & Nikto)
-│   ├── requirements.txt     # Backend dependencies
-│   └── cve_database.json    # Local CVE database (optional)
-│
-├── FrontEnd/
-│   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/           # Page routes (Dashboard, Results, etc.)
-│   │   └── utils/           # API calls, formatters, etc.
-│   ├── package.json         # Frontend dependencies
-│   └── tailwind.config.js   # Styling configuration
-│
-└── README.md
+     Automated-Vulnerability-Scanner/
+     │
+     ├── BackEnd/
+     │   ├── app.py               # Flask API entry point
+     │   ├── scanner.py           # Main scanning engine (Nmap & Nikto)
+     │   ├── requirements.txt     # Backend dependencies
+     │   └── cve_database.json    # Local CVE database (optional)
+     │
+     ├── FrontEnd/
+     │   ├── src/
+     │   │   ├── components/      # Reusable UI components
+     │   │   ├── pages/           # Page routes (Dashboard, Results, etc.)
+     │   │   └── utils/           # API calls, formatters, etc.
+     │   ├── package.json         # Frontend dependencies
+     │   └── tailwind.config.js   # Styling configuration
+     │
+     └── README.md
 
 🧩 Installation Guide
 
