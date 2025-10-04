@@ -7,59 +7,59 @@ this is the repository of Insa Cyber Talent Group 13
 
 ## 📌 Project Overview
 
-A comprehensive security scanning tool designed to perform both network and web application vulnerability assessments.
-It combines a Flask backend for powerful scanning capabilities with a React frontend for better user experience.
-The tool helps security researchers, system admins, and developers quickly identify weaknesses in their systems.
+     A comprehensive security scanning tool designed to perform both network and web application vulnerability assessments.
+     It combines a Flask backend for powerful scanning capabilities with a React frontend for better user experience.
+    The tool helps security researchers, system admins, and developers quickly identify weaknesses in their systems.
 
 🚀 Features
 
 🔧 Backend Capabilities
 
- Multiple Scan Types: Quick, Full, Stealth, Vulnerability, and Web scans
+    Multiple Scan Types: Quick, Full, Stealth, Vulnerability, and Web scans
 
- Nmap Integration: Network discovery, port scanning, and service detection
+    Nmap Integration: Network discovery, port scanning, and service detection
 
- Nikto Integration: Web application vulnerability scanning
+    Nikto Integration: Web application vulnerability scanning
 
- CVE Database: Local vulnerability database with severity ratings for reference
+    CVE Database: Local vulnerability database with severity ratings for reference
 
-RESTful API: Flask-based JSON API with robust error handling
+    RESTful API: Flask-based JSON API with robust error handling
 
 🎨 Frontend Features
 
- Modern UI: Built with React and TypeScript for type safety and maintainability
+    Modern UI: Built with React and TypeScript for type safety and maintainability
 
- Responsive Design: Styled with Tailwind CSS, supporting dark/light mode
+    Responsive Design: Styled with Tailwind CSS, supporting dark/light mode
 
- Real-time Scanning: Interactive forms with live results while scans are running
+    Real-time Scanning: Interactive forms with live results while scans are running
 
- Visual Results: Collapsible sections with severity indicators for better readability
+    Visual Results: Collapsible sections with severity indicators for better readability
 
- Copy & Export: Copy/export scan results
+    Copy & Export: Copy/export scan results
 
 🛠️ Technology Stack
 
 Backend
 
- Python 3.8+ – Core programming language
+    Python 3.8+ – Core programming language
 
- Flask – REST API framework
+    Flask – REST API framework
 
- Nmap – Network scanning engine
+    Nmap – Network scanning engine
 
- Nikto – Web vulnerability scanner
+    Nikto – Web vulnerability scanner
 
- xmltodict – Parse XML outputs from scanning tools
+    xmltodict – Parse XML outputs from scanning tools
 
 Frontend
 
- React 18 – Frontend framework
+    React 18 – Frontend framework
+ 
+    TypeScript – Type-safe development
 
- TypeScript – Type-safe development
+    Tailwind CSS – Utility-first CSS framework for responsive UI
 
- Tailwind CSS – Utility-first CSS framework for responsive UI
-
- Next.js (Optional) – For advanced React features like SSR and routing
+    Next.js (Optional) – For advanced React features like SSR and routing
 
  🧱 Project Structure
 
@@ -85,29 +85,33 @@ Frontend
 
 🔹 Clone the Repository
 
-  git clone https://github.com/<your-username>/Automated-Vulnerability-Scanner.git
+     git clone https://github.com/<your-username>/Automated-Vulnerability-Scanner.git
        cd Automated-Vulnerability-Scanner
 
 🔹 Backend Setup (Flask API)
 
-   cd BackEnd
+     cd BackEnd
       python3 -m venv venv
        source venv/bin/activate
        pip install -r requirements.txt
        python app.py
 
   🖥️ The backend will start at:
-          http://127.0.0.1:5000 or http://<your-local-ip>:5000
+  
+              http://127.0.0.1:5000 or http://<your-local-ip>:5000
 
   🔹 Frontend Setup:
+  
         cd FrontEnd
         npm install
          npm start
    
 🌐 Access via:
+
       http://localhost:3000
 
 🧰 Usage
+
  
 🖥️ Web Version
 
