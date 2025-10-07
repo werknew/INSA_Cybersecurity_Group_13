@@ -1,0 +1,15 @@
+Scan Report - Security Assessment
+Target:,dbu.edu.et
+Scan Type:,quick
+Date:,2025-10-01T12:02:14.656376
+Total Vulnerabilities:,8
+
+ID,Title,Severity,Port,Service,CVE,Description,Solution
+1-22-1759352546,Open SSH Service,high,22,ssh,,Port 22/tcp is open running ssh,Use SSH key authentication and disable root login
+1-ssh-1759352546,SSH Service Exposed,high,22,ssh,N/A,SSH service is accessible from network,Restrict SSH access to trusted IPs and use key authentication
+1-53-1759352546,Open DOMAIN Service,high,53,domain,,Port 53/tcp is open running domain,Secure DNS server configuration
+1-80-1759352546,Open HTTP Service,medium,80,http,,Port 80/tcp is open running http,Ensure web server is properly secured
+1-http-1759352546,HTTP Service (Unencrypted),medium,80,http,N/A,Web service running without encryption,Use HTTPS with TLS encryption
+1-443-1759352546,Open HTTPS Service,high,443,https,,Port 443/tcp is open running https,Use HTTPS with proper TLS configuration
+1-8080-1759352546,Open HTTP-PROXY Service,medium,8080,http-proxy,,Port 8080/tcp is open running http-proxy,Review if this service needs to be publicly accessible
+1-8443-1759352546,Open HTTPS-ALT Service,medium,8443,https-alt,,Port 8443/tcp is open running https-alt,Review if this service needs to be publicly accessible

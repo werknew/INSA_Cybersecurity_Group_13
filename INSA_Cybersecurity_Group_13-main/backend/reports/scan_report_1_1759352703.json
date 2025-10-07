@@ -1,0 +1,181 @@
+{
+  "metadata": {
+    "report_id": "1_1759352703",
+    "generated_at": "2025-10-01T12:05:03.546440",
+    "scanner_version": "2.0.0",
+    "report_format": "json_v2"
+  },
+  "scan_summary": {
+    "target": "dbu.edu.et",
+    "scan_type": "quick",
+    "start_time": "2025-10-01T12:02:14.656376",
+    "end_time": "2025-10-01T12:02:26.732052",
+    "status": "completed",
+    "total_vulnerabilities": 8
+  },
+  "vulnerability_statistics": {
+    "by_severity": {
+      "critical": 0,
+      "high": 4,
+      "medium": 4,
+      "low": 0
+    },
+    "by_type": {},
+    "risk_score": 55.00000000000001
+  },
+  "detailed_findings": [
+    {
+      "id": "1-22-1759352546",
+      "title": "Open SSH Service",
+      "description": "Port 22/tcp is open running ssh",
+      "severity": "high",
+      "port": "22",
+      "protocol": "tcp",
+      "service": "ssh",
+      "evidence": "22/tcp   open  ssh",
+      "solution": "Use SSH key authentication and disable root login",
+      "cve": null,
+      "type": "open_port"
+    },
+    {
+      "id": "1-ssh-1759352546",
+      "title": "SSH Service Exposed",
+      "description": "SSH service is accessible from network",
+      "severity": "high",
+      "port": "22",
+      "service": "ssh",
+      "evidence": "SSH running on port 22",
+      "solution": "Restrict SSH access to trusted IPs and use key authentication",
+      "type": "service_exposure"
+    },
+    {
+      "id": "1-53-1759352546",
+      "title": "Open DOMAIN Service",
+      "description": "Port 53/tcp is open running domain",
+      "severity": "high",
+      "port": "53",
+      "protocol": "tcp",
+      "service": "domain",
+      "evidence": "53/tcp   open  domain",
+      "solution": "Secure DNS server configuration",
+      "cve": null,
+      "type": "open_port"
+    },
+    {
+      "id": "1-80-1759352546",
+      "title": "Open HTTP Service",
+      "description": "Port 80/tcp is open running http",
+      "severity": "medium",
+      "port": "80",
+      "protocol": "tcp",
+      "service": "http",
+      "evidence": "80/tcp   open  http",
+      "solution": "Ensure web server is properly secured",
+      "cve": null,
+      "type": "open_port"
+    },
+    {
+      "id": "1-http-1759352546",
+      "title": "HTTP Service (Unencrypted)",
+      "description": "Web service running without encryption",
+      "severity": "medium",
+      "port": "80",
+      "service": "http",
+      "evidence": "HTTP on port 80 - no encryption",
+      "solution": "Use HTTPS with TLS encryption",
+      "type": "encryption"
+    },
+    {
+      "id": "1-443-1759352546",
+      "title": "Open HTTPS Service",
+      "description": "Port 443/tcp is open running https",
+      "severity": "high",
+      "port": "443",
+      "protocol": "tcp",
+      "service": "https",
+      "evidence": "443/tcp  open  https",
+      "solution": "Use HTTPS with proper TLS configuration",
+      "cve": null,
+      "type": "open_port"
+    },
+    {
+      "id": "1-8080-1759352546",
+      "title": "Open HTTP-PROXY Service",
+      "description": "Port 8080/tcp is open running http-proxy",
+      "severity": "medium",
+      "port": "8080",
+      "protocol": "tcp",
+      "service": "http-proxy",
+      "evidence": "8080/tcp open  http-proxy",
+      "solution": "Review if this service needs to be publicly accessible",
+      "cve": null,
+      "type": "open_port"
+    },
+    {
+      "id": "1-8443-1759352546",
+      "title": "Open HTTPS-ALT Service",
+      "description": "Port 8443/tcp is open running https-alt",
+      "severity": "medium",
+      "port": "8443",
+      "protocol": "tcp",
+      "service": "https-alt",
+      "evidence": "8443/tcp open  https-alt",
+      "solution": "Review if this service needs to be publicly accessible",
+      "cve": null,
+      "type": "open_port"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "high",
+      "description": "Review and secure https service configuration",
+      "action": "Harden https service settings and apply updates"
+    },
+    {
+      "priority": "high",
+      "description": "Review and secure http-proxy service configuration",
+      "action": "Harden http-proxy service settings and apply updates"
+    },
+    {
+      "priority": "high",
+      "description": "Review and secure ssh service configuration",
+      "action": "Harden ssh service settings and apply updates"
+    },
+    {
+      "priority": "high",
+      "description": "Review and secure https-alt service configuration",
+      "action": "Harden https-alt service settings and apply updates"
+    },
+    {
+      "priority": "high",
+      "description": "Review and secure domain service configuration",
+      "action": "Harden domain service settings and apply updates"
+    },
+    {
+      "priority": "high",
+      "description": "Review and secure http service configuration",
+      "action": "Harden http service settings and apply updates"
+    },
+    {
+      "priority": "medium",
+      "description": "Implement regular vulnerability scanning",
+      "action": "Schedule weekly security assessments"
+    },
+    {
+      "priority": "medium",
+      "description": "Review firewall and network access rules",
+      "action": "Restrict unnecessary port access"
+    }
+  ],
+  "technical_details": {
+    "scan_parameters": {
+      "target": "dbu.edu.et",
+      "type": "quick"
+    },
+    "tools_used": [
+      "nmap",
+      "curl",
+      "custom_scanner"
+    ]
+  }
+}

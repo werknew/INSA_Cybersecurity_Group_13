@@ -1,0 +1,36 @@
+SECURITY SCAN EXECUTIVE SUMMARY
+==================================================
+
+Target: dbu.edu.et
+Scan Date: 2025-10-01T12:02:14.656376
+Scan Type: QUICK
+
+RISK OVERVIEW:
+--------------------
+Critical Findings: 0
+High Risk Findings: 4
+Medium Risk Findings: 4
+Low Risk Findings: 0
+TOTAL: 8
+
+KEY FINDINGS:
+---------------
+1. Open SSH Service (HIGH)
+   - Port 22/tcp is open running ssh...
+
+2. SSH Service Exposed (HIGH)
+   - SSH service is accessible from network...
+
+3. Open DOMAIN Service (HIGH)
+   - Port 53/tcp is open running domain...
+
+4. Open HTTPS Service (HIGH)
+   - Port 443/tcp is open running https...
+
+RECOMMENDATIONS:
+--------------------
+1. Address critical and high-risk findings immediately
+2. Implement regular security scanning
+3. Review and harden network configurations
+4. Update and patch identified services
+5. Conduct penetration testing for critical systems

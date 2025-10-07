@@ -1,0 +1,9 @@
+Scan Report - Security Assessment
+Target:,dbu.edu.com
+Scan Type:,web
+Date:,2025-10-06T07:56:52.406994
+Total Vulnerabilities:,2
+
+ID,Title,Severity,Port,Service,CVE,Description,Solution
+3-web-1,Missing X-Frame-Options Header,medium,N/A,N/A,N/A,Clickjacking protection is not enabled,Add X-Frame-Options header to prevent clickjacking
+3-web-2,Missing X-Content-Type-Options Header,low,N/A,N/A,N/A,MIME type sniffing protection not enabled,Add X-Content-Type-Options: nosniff header

@@ -1,0 +1,3 @@
+Linux with Nmap and Nikto installed: sudo apt install nmap nikto
+
+Python packages: pip install lxml requests rich
