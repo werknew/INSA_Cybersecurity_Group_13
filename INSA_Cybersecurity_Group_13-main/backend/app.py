@@ -1099,7 +1099,7 @@ def get_all_scans(current_user):
 @app.route('/api/assets', methods=['GET'])
 @token_required
 def get_assets(current_user):
-    # Extract unique assets from scans
+    # Extract unique assets from scanss
     assets_map = {}
     
     if current_user['role'] == 'admin':
