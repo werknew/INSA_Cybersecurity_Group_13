@@ -204,3 +204,14 @@ FLASK_ENV=development
 
 Would you like me to format this as a **Markdown file (`README.md`)** ready to download (with badges and visual headers)?
 I can also add **images, badges (React, Flask, Python)**, and **a professional layout** for GitHub.
+```
+# 🆘 Support
+```For support and questions:
+
+Check existing scan results with scanme.nmap.org
+
+Ensure backend is running on port 5000
+
+Verify Nmap is installed and accessible
+
+Check browser console for WebSocket connection status
