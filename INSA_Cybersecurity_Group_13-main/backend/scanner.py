@@ -44,7 +44,7 @@ class VulnerabilityScanner:
                 "full": ["-sS", "-sV", "-sC", "-O", "-T4"],  # Full TCP SYN scan with version detection
                 "stealth": ["-sS", "-T2", "--scan-delay", "1s"],  # Stealth scan
                 "vulnerability": ["-sV", "--script", "vuln"],  # Vulnerability scan
-                "web": ["-p", "80,443,8080,8443", "--script", "http-enum,http-vuln*"]  # Web-specific scan
+                "web": ["-p", "80,443,8080,8443", "--script", "http-enum,http-vuln*"]  # Webspecific scan
             }
             
             args = nmap_args.get(scan_type, nmap_args["quick"])
