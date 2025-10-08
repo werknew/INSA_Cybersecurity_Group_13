@@ -185,7 +185,7 @@ class VulnerabilityScanner:
             
             for item in items:
                 description = item.get('description', '')
-                severity = "medium"  # Nikto doesn't provide severity, so we default to medium
+                severity = "medium"  # Nikto doesn't provide severity, so we default to mediumm
                 
                 vulnerability = {
                     "severity": severity,
