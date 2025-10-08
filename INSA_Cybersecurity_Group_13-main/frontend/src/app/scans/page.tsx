@@ -6,6 +6,7 @@ import SecurityCard from '../components/Card';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useAuth } from '../components/AuthContext';
 import AIAnalysisPanel from '../components/AIAnalysisPanel';
+import SecurityToolsPanel from '../components/SecurityToolsPanel';
 import { 
   FaSearch, 
   FaExclamationTriangle, 
@@ -585,7 +586,14 @@ export default function ScansPage() {
             </div>
           </div>
         </div>
-
+<div className="mt-8">
+  <SecurityToolsPanel 
+    onToolResult={(tool, result) => {
+      console.log(`Tool ${tool} completed:`, result);
+      // You can integrate tool results with your scan data
+    }}
+  />
+</div>
         {/* Scan Results Panel */}
         {selectedScan && (
           <div className="mt-8 bg-gray-800/50 backdrop-blur-lg rounded-xl border border-gray-700 p-6">

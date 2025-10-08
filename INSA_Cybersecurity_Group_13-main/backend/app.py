@@ -33,6 +33,7 @@ import numpy as np
 from textwrap import wrap
 import xmltodict
 from ai_service import ai_analyzer
+from security_tools import security_tools
 
 # Configure logging
 logging.basicConfig(
@@ -1303,6 +1304,110 @@ def get_ai_status():
             'report_enhancement'
         ]
     })
+
+# Add new security tools endpoints
+@app.route('/api/tools/status', methods=['GET'])
+def get_tools_status():
+    """Get status of all security tools"""
+    api_status = security_tools.get_api_status()
+    
+    return jsonify({
+        'tools_available': {
+            'shodan': api_status['shodan'],
+            'virustotal': api_status['virustotal'],
+            'abuseipdb': api_status['abuseipdb'],
+            'dns': True,  # Always available
+            'whois': True,  # Always available
+            'security_headers': True,  # Always available
+            'ssl_certificate': True  # Always available
+        },
+        'demo_mode': api_status['demo_mode'],
+        'total_available': sum([
+            api_status['shodan'],
+            api_status['virustotal'], 
+            api_status['abuseipdb'],
+            True, True, True, True  # DNS, WHOIS, Security Headers, SSL
+        ]),
+        'total_tools': 7,
+        'message': 'Add API keys in .env file to enable real Shodan, VirusTotal, and AbuseIPDB lookups'
+    })
+
+@app.route('/api/tools/shodan/<ip>', methods=['GET'])
+@token_required
+def shodan_lookup(current_user, ip):
+    """Shodan IP lookup with fallback"""
+    try:
+        result = security_tools.shodan_host_search(ip)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tools/virustotal/ip/<ip>', methods=['GET'])
+@token_required
+def virustotal_ip_lookup(current_user, ip):
+    """VirusTotal IP reputation with fallback"""
+    try:
+        result = security_tools.virustotal_ip_report(ip)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tools/abuseipdb/<ip>', methods=['GET'])
+@token_required
+def abuseipdb_check(current_user, ip):
+    """AbuseIPDB reputation with fallback"""
+    try:
+        result = security_tools.abuseipdb_check(ip)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tools/dns/<domain>', methods=['GET'])
+@token_required
+def dns_lookup(current_user, domain):
+    """DNS lookup for domain"""
+    try:
+        record_type = request.args.get('type', 'A')
+        result = security_tools.dns_lookup(domain, record_type)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tools/whois/<domain>', methods=['GET'])
+@token_required
+def whois_lookup(current_user, domain):
+    """WHOIS lookup for domain with fallback"""
+    try:
+        result = security_tools.whois_lookup(domain)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tools/security-headers', methods=['POST'])
+@token_required
+def check_security_headers(current_user):
+    """Check security headers of a website"""
+    try:
+        data = request.get_json()
+        url = data.get('url')
+        
+        if not url:
+            return jsonify({'error': 'URL is required'}), 400
+        
+        result = security_tools.check_security_headers(url)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tools/ssl-certificate/<domain>', methods=['GET'])
+@token_required
+def check_ssl_certificate(current_user, domain):
+    """Check SSL certificate of a domain"""
+    try:
+        result = security_tools.check_ssl_certificate(domain)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 if __name__ == '__main__':
     logger.info("🚀 Advanced Security Scanner with Authentication Starting...")
     socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
