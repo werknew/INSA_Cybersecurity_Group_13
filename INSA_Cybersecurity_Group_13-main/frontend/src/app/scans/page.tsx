@@ -5,6 +5,7 @@ import SecurityLayout from '../components/Layout';
 import SecurityCard from '../components/Card';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useAuth } from '../components/AuthContext';
+import AIAnalysisPanel from '../components/AIAnalysisPanel';
 import { 
   FaSearch, 
   FaExclamationTriangle, 
@@ -19,7 +20,9 @@ import {
   FaGlobe,
   FaStop,
   FaTrash,
-  FaSync
+  FaSync,
+  FaRobot,
+  FaBrain
 } from 'react-icons/fa';
 import io, { Socket } from 'socket.io-client';
 
@@ -48,6 +51,10 @@ interface Vulnerability {
   solution: string;
   cve?: string;
   type: string;
+  ai_analysis?: any;
+  ai_priority_score?: number;
+  ai_priority_reason?: string;
+  ai_recommended_timeline?: string;
 }
 
 export default function ScansPage() {
@@ -66,6 +73,8 @@ export default function ScansPage() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [backendStatus, setBackendStatus] = useState<'connected' | 'disconnected' | 'checking'>('checking');
   const [terminatingScan, setTerminatingScan] = useState<number | null>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<any>(null);
+  const [showAIPanel, setShowAIPanel] = useState(false);
   
   const { token } = useAuth();
 
@@ -288,6 +297,9 @@ export default function ScansPage() {
 
   const handleScanSelect = async (scan: Scan) => {
     setSelectedScan(scan);
+    setAiAnalysis(null);
+    setShowAIPanel(false);
+    
     if (scan.status === 'completed') {
       await fetchVulnerabilities(scan.id);
     }
@@ -296,6 +308,16 @@ export default function ScansPage() {
   const clearSelectedScan = () => {
     setSelectedScan(null);
     setVulnerabilities([]);
+    setAiAnalysis(null);
+    setShowAIPanel(false);
+  };
+
+  const handleAIAnalysisComplete = (analysis: any) => {
+    setAiAnalysis(analysis);
+    // Update vulnerabilities with AI prioritization
+    if (analysis.prioritized_vulnerabilities) {
+      setVulnerabilities(analysis.prioritized_vulnerabilities);
+    }
   };
 
   const getSeverityColor = (severity: string) => {
@@ -338,6 +360,13 @@ export default function ScansPage() {
     return times[scanType as keyof typeof times] || '2-5 minutes';
   };
 
+  const getAIPriorityColor = (score: number) => {
+    if (score >= 0.8) return 'text-red-400';
+    if (score >= 0.6) return 'text-orange-400';
+    if (score >= 0.4) return 'text-yellow-400';
+    return 'text-green-400';
+  };
+
   return (
     <ProtectedRoute>
       <SecurityLayout>
@@ -348,7 +377,7 @@ export default function ScansPage() {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
                 Security Scans
               </h1>
-              <p className="text-gray-400">Fast vulnerability assessments with real-time control</p>
+              <p className="text-gray-400">Fast vulnerability assessments with AI-powered analysis</p>
             </div>
             <div className="flex items-center gap-4">
               <button 
@@ -571,6 +600,19 @@ export default function ScansPage() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
+                {selectedScan.status === 'completed' && vulnerabilities.length > 0 && (
+                  <button
+                    onClick={() => setShowAIPanel(!showAIPanel)}
+                    className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
+                      showAIPanel 
+                        ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' 
+                        : 'bg-gray-700/50 text-gray-300 border-gray-600 hover:bg-gray-600/50'
+                    }`}
+                  >
+                    <FaRobot />
+                    {showAIPanel ? 'Hide AI Analysis' : 'Show AI Analysis'}
+                  </button>
+                )}
                 <button
                   onClick={clearSelectedScan}
                   className="px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-600/50 transition-colors"
@@ -637,6 +679,17 @@ export default function ScansPage() {
 
             {selectedScan.status === 'completed' && (
               <div>
+                {/* AI Analysis Panel */}
+                {showAIPanel && (
+                  <div className="mb-8">
+                    <AIAnalysisPanel 
+                      scanId={selectedScan.id}
+                      vulnerabilities={vulnerabilities}
+                      onAnalysisComplete={handleAIAnalysisComplete}
+                    />
+                  </div>
+                )}
+
                 <div className="mb-6 p-4 bg-gray-700/30 rounded-lg border border-gray-600">
                   <div className="flex items-center justify-between">
                     <div>
@@ -645,6 +698,11 @@ export default function ScansPage() {
                       </p>
                       <p className="text-gray-400">
                         Found {vulnerabilities.length} security issues
+                        {aiAnalysis && (
+                          <span className="text-purple-400 ml-2">
+                            • AI Analysis: {aiAnalysis.prioritized_vulnerabilities?.length || vulnerabilities.length} prioritized
+                          </span>
+                        )}
                       </p>
                     </div>
                     <div className="text-right">
@@ -675,6 +733,12 @@ export default function ScansPage() {
                             {vulnerabilities.filter(v => v.severity === 'high').length} High
                           </span>
                         )}
+                        {aiAnalysis && (
+                          <span className="px-2 py-1 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded text-xs flex items-center gap-1">
+                            <FaBrain />
+                            AI Prioritized
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -686,7 +750,21 @@ export default function ScansPage() {
                         'border-l-blue-500 bg-blue-500/10'
                       }`}>
                         <div className="flex items-start justify-between mb-3">
-                          <h3 className="font-bold text-white text-lg flex-1">{vuln.title}</h3>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-white text-lg flex items-center gap-2">
+                              {vuln.title}
+                              {vuln.ai_priority_score && (
+                                <span className={`text-sm font-normal ${getAIPriorityColor(vuln.ai_priority_score)}`}>
+                                  (AI Priority: {(vuln.ai_priority_score * 100).toFixed(0)}%)
+                                </span>
+                              )}
+                            </h3>
+                            {vuln.ai_priority_reason && (
+                              <p className="text-purple-400 text-sm mt-1">
+                                🤖 {vuln.ai_priority_reason}
+                              </p>
+                            )}
+                          </div>
                           <span className={`px-3 py-1 rounded text-sm font-bold ml-4 ${getSeverityColor(vuln.severity)}`}>
                             {vuln.severity.toUpperCase()}
                           </span>
@@ -710,7 +788,41 @@ export default function ScansPage() {
                               <p className="text-sm text-red-400 font-mono">{vuln.cve}</p>
                             </div>
                           )}
+
+                          {vuln.ai_recommended_timeline && (
+                            <div>
+                              <p className="text-sm text-gray-400 mb-1"><strong>AI Timeline:</strong></p>
+                              <p className="text-sm text-green-400 capitalize">{vuln.ai_recommended_timeline.replace('_', ' ')}</p>
+                            </div>
+                          )}
                         </div>
+
+                        {/* AI Analysis Details */}
+                        {vuln.ai_analysis && (
+                          <div className="mb-3 p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                            <p className="text-purple-400 font-semibold mb-2">🤖 AI Analysis:</p>
+                            <div className="grid md:grid-cols-2 gap-3 text-sm">
+                              <div>
+                                <p className="text-gray-400 mb-1"><strong>Business Impact:</strong></p>
+                                <p className="text-white">{vuln.ai_analysis.business_impact}</p>
+                              </div>
+                              <div>
+                                <p className="text-gray-400 mb-1"><strong>Exploitation Likelihood:</strong></p>
+                                <p className="text-orange-400 capitalize">{vuln.ai_analysis.exploitation_likelihood}</p>
+                              </div>
+                              {vuln.ai_analysis.immediate_actions && (
+                                <div className="md:col-span-2">
+                                  <p className="text-gray-400 mb-1"><strong>Immediate Actions:</strong></p>
+                                  <ul className="text-white list-disc list-inside">
+                                    {vuln.ai_analysis.immediate_actions.map((action: string, index: number) => (
+                                      <li key={index}>{action}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                         
                         <div className="mb-3">
                           <p className="text-sm text-gray-400 mb-1"><strong>Evidence:</strong></p>

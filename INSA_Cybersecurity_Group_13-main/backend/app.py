@@ -32,6 +32,7 @@ import pandas as pd
 import numpy as np
 from textwrap import wrap
 import xmltodict
+from ai_service import ai_analyzer
 
 # Configure logging
 logging.basicConfig(
@@ -1168,6 +1169,140 @@ def health_check():
 def handle_connect():
     emit('connected', {'message': 'Connected to security scanner'})
 
+# Add new AI endpoints
+@app.route('/api/scan/<int:scan_id>/ai-analysis', methods=['POST'])
+@token_required
+def get_ai_analysis(current_user, scan_id):
+    """Get AI-powered analysis for a scan"""
+    try:
+        scan_data = scans_db.get(scan_id)
+        if not scan_data:
+            return jsonify({'error': 'Scan not found'}), 404
+        
+        # Check if user owns the scan or is admin
+        if scan_data.get('user_email') != current_user['email'] and current_user['role'] != 'admin':
+            return jsonify({'error': 'Access denied'}), 403
+        
+        vulnerabilities = vulnerabilities_db.get(scan_id, [])
+        
+        # Get AI analysis for each vulnerability
+        analyzed_vulnerabilities = []
+        for vuln in vulnerabilities:
+            ai_analysis = ai_analyzer.analyze_vulnerability_context(vuln, scan_data)
+            vuln_with_ai = {**vuln, 'ai_analysis': ai_analysis}
+            analyzed_vulnerabilities.append(vuln_with_ai)
+        
+        # Prioritize vulnerabilities with AI
+        prioritized_vulnerabilities = ai_analyzer.prioritize_vulnerabilities(analyzed_vulnerabilities)
+        
+        # Generate remediation plan
+        remediation_plan = ai_analyzer.generate_remediation_plan(prioritized_vulnerabilities)
+        
+        # Detect anomalies if we have historical data
+        user_scans = [s for s in scans_db.values() if s.get('user_email') == current_user['email']]
+        historical_scans = [s for s in user_scans if s['id'] != scan_id and s.get('results')]
+        anomalies = ai_analyzer.detect_anomalies(scan_data, historical_scans)
+        
+        return jsonify({
+            'scan_id': scan_id,
+            'ai_analysis_available': ai_analyzer.enabled,
+            'prioritized_vulnerabilities': prioritized_vulnerabilities,
+            'remediation_plan': remediation_plan,
+            'anomalies_detected': anomalies,
+            'ai_insights': {
+                'total_vulnerabilities_analyzed': len(prioritized_vulnerabilities),
+                'critical_insights': [
+                    vuln for vuln in prioritized_vulnerabilities 
+                    if vuln.get('ai_priority_score', 0) > 0.8
+                ][:3]  # Top 3 critical insights
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/analyze-vulnerability', methods=['POST'])
+@token_required
+def analyze_single_vulnerability(current_user):
+    """AI analysis for a specific vulnerability"""
+    try:
+        data = request.get_json()
+        vulnerability = data.get('vulnerability')
+        scan_context = data.get('scan_context', {})
+        
+        if not vulnerability:
+            return jsonify({'error': 'Vulnerability data is required'}), 400
+        
+        analysis = ai_analyzer.analyze_vulnerability_context(vulnerability, scan_context)
+        
+        return jsonify({
+            'vulnerability_analysis': analysis,
+            'ai_enabled': ai_analyzer.enabled
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/generate-report-insights', methods=['POST'])
+@token_required
+def generate_report_insights(current_user):
+    """Generate AI insights for report enhancement"""
+    try:
+        data = request.get_json()
+        scan_data = data.get('scan_data')
+        vulnerabilities = data.get('vulnerabilities', [])
+        
+        if not scan_data:
+            return jsonify({'error': 'Scan data is required'}), 400
+        
+        # Generate executive summary
+        critical_count = len([v for v in vulnerabilities if v.get('severity') in ['critical', 'high']])
+        total_count = len(vulnerabilities)
+        
+        insights = {
+            'executive_summary': f"Security assessment identified {total_count} vulnerabilities with {critical_count} critical/high risk findings requiring immediate attention.",
+            'key_risks': [],
+            'strategic_recommendations': [],
+            'compliance_insights': []
+        }
+        
+        if ai_analyzer.enabled and vulnerabilities:
+            # Use AI to enhance insights
+            remediation_plan = ai_analyzer.generate_remediation_plan(vulnerabilities)
+            insights['ai_enhanced_remediation'] = remediation_plan
+            
+            # Generate key risks
+            high_priority_vulns = [v for v in vulnerabilities if v.get('severity') in ['critical', 'high']][:5]
+            insights['key_risks'] = [
+                f"{vuln['title']} ({vuln.get('service', 'Unknown service')}) - {vuln.get('description', '')[:100]}..."
+                for vuln in high_priority_vulns
+            ]
+        
+        return jsonify({
+            'insights': insights,
+            'ai_enhanced': ai_analyzer.enabled
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/status', methods=['GET'])
+def get_ai_status():
+    """Get AI service status"""
+    return jsonify({
+        'ai_enabled': ai_analyzer.enabled,
+        'services_available': {
+            'openai': bool(ai_analyzer.openai_api_key),
+            'anthropic': bool(ai_analyzer.anthropic_api_key)
+        },
+        'capabilities': [
+            'vulnerability_analysis',
+            'risk_prioritization', 
+            'remediation_planning',
+            'anomaly_detection',
+            'report_enhancement'
+        ]
+    })
 if __name__ == '__main__':
     logger.info("🚀 Advanced Security Scanner with Authentication Starting...")
     socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
