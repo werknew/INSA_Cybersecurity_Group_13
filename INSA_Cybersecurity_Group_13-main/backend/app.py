@@ -61,7 +61,7 @@ scan_processes = {}
 scan_id_counter = 1
 reports_db = {}
 
-# User storage (replace with database in production)
+# User storage (replace with database in productionn)
 users_db = {
     'admin@security.com': {
         'id': 1,
