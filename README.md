@@ -1,5 +1,5 @@
 
-# 🛡️ CyberScan — Real-Time Security Scanning Dashboard
+# 🛡️ EthioCyberScan — Real-Time Security Scanning Dashboard
 
 ### 🚀 Production-Ready Full Stack Web Application
 
@@ -9,18 +9,18 @@
 
 ## 🧠 Overview
 
-**CyberScan** is a **real-time vulnerability assessment and security monitoring platform** designed for cybersecurity teams.
+**EthioCyberScan** is a **real-time vulnerability assessment and security monitoring platform** designed for cybersecurity teams.
 It provides a **centralized dashboard** to execute, track, and visualize multiple types of security scans — all integrated with live WebSocket communication and an intuitive UI/UX.
 
 ---
 
 ## 🏆 Key Achievements
 
-✅ Built a **production-ready dashboard** with live scanning capabilities
-✅ Integrated **real-world security tools** — Nmap and Nikto
-✅ Designed a **professional, security-focused UI/UX**
-✅ Implemented **real-time WebSocket updates** every 2 seconds
-✅ Architected a **scalable backend** ready for enterprise deployment
+    ✅ Built a **production-ready dashboard** with live scanning capabilities
+    ✅ Integrated **real-world security tools** — Nmap and Nikto
+    ✅ Designed a **professional, security-focused UI/UX**
+    ✅ Implemented **real-time WebSocket updates** every 2 seconds
+    ✅ Architected a **scalable backend** ready for enterprise deployment
 
 ---
 
