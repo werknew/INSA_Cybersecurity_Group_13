@@ -1,5 +1,5 @@
 
-# 🛡️ EthioCyberScan — Real-Time Security Scanning Dashboard
+# 🛡️ EthioCyberScan — Real-Time Security Scanning Tool
 
 ### 🚀 Production-Ready Full Stack Web Application
 
